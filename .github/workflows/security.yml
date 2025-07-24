@@ -7,12 +7,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    
+
+    - name: Install Semgrep
+      run: pip install semgrep
+
     - name: Run SAST with Semgrep
       run: semgrep scan --config auto
+
+    - name: Install Trivy
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget
+        wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.50.2_Linux-64bit.deb
+        sudo dpkg -i trivy_0.50.2_Linux-64bit.deb
 
     - name: Run Trivy (IaC + Secrets)
       run: |
         trivy config .
         trivy fs --scanners secret .
-
